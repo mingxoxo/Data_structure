@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+typedef struct NODE {
+	int e;
+	struct NODE *llink;
+	struct NODE *rlink;
+}NODE;
+
+typedef struct Tree {
+	NODE *node;
+	struct Tree *prev;
+	struct Tree *next;
+}Tree;
+
+void getNode(NODE **p) {
+	(*p) = (NODE *)malloc(sizeof(NODE));
+}
+
+void getNode2(Tree **p) {
+	(*p) = (Tree *)malloc(sizeof(Tree));
+}
+
+void Edge(int e, NODE *node, NODE *left, NODE *right) {
+	node->e = e;
+	node->llink = left;
+	node->rlink = right;
+}
+
+void enqueue(Tree **p, Tree **q, NODE *e) {
+	Tree *tmp = NULL;
+	getNode(&tmp);
+	tmp->node = e;
+	tmp->next = NULL;
+	tmp->prev = (*p);
+	if ((*p) != NULL) {
+		(*p)->next = tmp;
+	}
+	else (*q) = tmp;
+	(*p) = tmp;
+}
+
+NODE* dequeue(Tree **p, Tree **q) {
+	Tree *tmp = NULL;
+	NODE *e = NULL;
+	tmp = (*p);
+	e = tmp->node;
+	(*p) = (*p)->next;
+	if ((*p) != NULL) {
+		(*p)->prev = NULL;
+	}
+	else (*q) = NULL;
+	free(tmp);
+	return e;
+}
+
+void printNode(NODE *node) {
+	printf("%d ", node->e);
+	if (node->llink != NULL) printf("%d ", (node->llink)->e);
+	if (node->rlink != NULL) printf("%d ", (node->rlink)->e);
+}
+
+levelOrder(NODE *p) {
+	Tree *front = NULL, *rear = NULL;
+	enqueue(&rear, &front, p);
+	while (front != NULL) {
+		p = dequeue(&front, &rear);
+		printf("%d ", p->e);
+		if (p->llink != NULL) enqueue(&rear, &front, p->llink);
+		if (p->rlink != NULL) enqueue(&rear, &front, p->rlink);
+	}
+	printf("\n");
+}
+
+void main() {
+	
+	NODE *F1, *F2, *F3, *F4, *F5, *F6, *F7, *F8;
+	int n;
+	getNode(&F1); getNode(&F2); getNode(&F3); getNode(&F4);
+	getNode(&F5); getNode(&F6); getNode(&F7); getNode(&F8);
+	Edge(20, F1, F2, F3);
+	Edge(30, F2, F4, F5);
+	Edge(70, F4, NULL, NULL);
+	Edge(90, F5, NULL, NULL);
+	Edge(50, F3, NULL, F6);
+	Edge(120, F6, F7, F8);
+	Edge(130, F7, NULL, NULL);
+	Edge(80, F8, NULL, NULL);
+	
+	levelOrder(F1);
+}
